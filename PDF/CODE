@@ -1,0 +1,38 @@
+#define analogPin A0      // ขาต่อกับ AO ของ LDR Sensor
+#define digitalPin 4      // ขาต่อกับ DO ของ LDR Sensor (ไม่ได้ใช้ใน logic นี้แต่ประกาศไว้ได้)
+#define relayPin 13       // ขาต่อกับขา IN ของ Relay Module
+
+void setup() {
+  pinMode(digitalPin, INPUT);
+  pinMode(analogPin, INPUT);
+  pinMode(relayPin, OUTPUT);
+  
+  // เริ่มต้นให้ปิดไฟก่อน (สำหรับ Relay ส่วนใหญ่คือ HIGH คือปิด)
+  digitalWrite(relayPin, HIGH); 
+  
+  Serial.begin(9600);
+  Serial.println("System Starting...");
+}
+
+void loop() {
+  int analogValue = analogRead(analogPin);  // อ่านค่าความเข้มแสง (0-1023)
+
+  // เงื่อนไข: ถ้ามืด (ค่า Analog สูงขึ้น) ให้เปิดไฟ
+  // หมายเหตุ: ค่า 550 ปรับเปลี่ยนได้ตามความเหมาะสมของสภาพแวดล้อม
+  if (analogValue > 550) 
+  {
+    digitalWrite(relayPin, LOW);  // สั่ง Relay ทำงาน (ไฟติด) สำหรับ Relay Active LOW
+    Serial.print("Analog: ");
+    Serial.print(analogValue);
+    Serial.println(" -> [ LAMP ON ]"); 
+  } 
+  else 
+  {
+    digitalWrite(relayPin, HIGH); // สั่ง Relay หยุดทำงาน (ไฟดับ)
+    Serial.print("Analog: ");
+    Serial.print(analogValue);
+    Serial.println(" -> [ LAMP OFF ]");
+  }
+
+  delay(1000); // หน่วงเวลา 1 วินาที
+}
